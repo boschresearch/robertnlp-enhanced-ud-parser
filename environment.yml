@@ -1,0 +1,14 @@
+name: robertnlp
+channels:
+  - pyconll
+  - defaults
+dependencies:
+  - python=3.7.5
+  - pip=19.3.1
+  - pytorch=1.3.1
+  - pyconll=2.2.1
+  - pip:
+    - transformers==2.3.0
+    - allennlp==0.9.0
+    - stanfordnlp
+

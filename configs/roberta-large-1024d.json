@@ -1,0 +1,85 @@
+{
+    "name": "RoBERTa_large_1024d",
+    "comment": "RoBERTa-large embeddings, 1024d hidden layer",
+    "n_gpu": 1,
+
+    "model": {
+        "type": "BasicLabelScorer",
+        "args": {
+            "embeddings_processor": {
+                "inputs": [
+                    {
+                        "type": "RobertaWrapper",
+                        "args": {
+                            "model_path": "data/pretrained_embeddings/roberta-large/",
+                            "fine_tune": true,
+                            "scalar_mix": true,
+                            "hidden_dropout": 0.2,
+                            "attn_dropout": 0.2,
+                            "output_dropout": 0.5,
+                            "scalar_mix_layer_dropout": 0.1,
+                            "token_mask_prob": 0.15
+                        }
+                    }
+                ],
+
+                "args": {}
+            },
+
+            "classifier": {
+                "type": "DeepBiaffineScorer",
+                "args": {
+                    "hidden_size": 1024,
+                    "dropout": 0.33
+                }
+            },
+
+            "output_vocab": {
+                "type": "BasicVocab",
+                "args": {
+                    "vocab_filename": "data/corpora/ewt/vocab/delex.vocab"
+                }
+            }
+        }
+    },
+
+    "data_loaders": {
+        "type": "CONLLULoader",
+
+        "args": {
+            "batch_size": 5,
+            "num_workers": 2,
+            "shuffle": true
+        },
+
+        "paths": {
+            "train":  "data/corpora/ewt/en_ewt-ud-train.delex.conllu",
+            "dev": "data/corpora/ewt/en_ewt-ud-dev.delex.conllu"
+        }
+    },
+
+    "trainer": {
+        "min_epochs": 15,
+        "max_epochs": 300,
+        "early_stop": 10,
+
+        "save_dir": "data/saved_models/",
+        "save_period": 10,
+        "verbosity": 2,
+
+        "optimizer": {
+            "type": "AdamW",
+            "args": {
+                "lr": 5e-6,
+                "weight_decay": 0.0
+            }
+        },
+
+        "loss": {
+            "type": "CrossEntropyLoss",
+            "args": {
+                "ignore_index": -1
+            }
+        }
+    }
+}
